@@ -1,0 +1,27 @@
+name: APTVCarPlay
+options:
+  bundleIdPrefix: com.custom
+targets:
+  APTVCarPlay:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - APTVCarPlay
+    info:
+      path: APTVCarPlay/Info.plist
+      properties:
+        UILaunchScreen: {}
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        UIBackgroundModes:
+          - audio
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).SceneDelegate
+            CPTemplateApplicationSceneSessionRoleApplication:
+              - UISceneConfigurationName: CarPlay Configuration
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate

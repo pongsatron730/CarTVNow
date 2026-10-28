@@ -1,0 +1,42 @@
+name: Build APTV iOS IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-ipa:
+    runs-on: macos-14
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Generate Xcode Project via XcodeGen
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Build Unsigned Archive
+        run: |
+          xcodebuild clean archive \
+            -project APTVCarPlay.xcodeproj \
+            -scheme APTVCarPlay \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath $RUNNER_TEMP/APTV.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Package .app into .ipa
+        run: |
+          mkdir -p Payload
+          cp -r $RUNNER_TEMP/APTV.xcarchive/Products/Applications/APTVCarPlay.app Payload/
+          zip -r APTVCarPlay.ipa Payload
+
+      - name: Upload Ready-to-Install .ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: APTVCarPlay-iOS-IPA
+          path: APTVCarPlay.ipa
